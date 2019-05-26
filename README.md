@@ -258,4 +258,4 @@ public class StudentMapperProvider {
     List<Student> queryAllByNativeSql(Student student);
 ```
 
-当然增删改也可以使用动态sql，  mybatis就是那么灵活，你想这么晚就可以这么玩，前提是你能写出一手good sql.
+当然增删改也可以使用动态sql，  mybatis就是那么灵活，你想这么玩就可以怎么玩，前提是你能写出一手good sql.
