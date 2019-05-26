@@ -4,7 +4,7 @@ Springboot 的使用已经越来越广泛了，目前使用的主流持久层框
 ## 1.准备
 
  1. 友情链接：[mybatis-3 github](https://github.com/mybatis/mybatis-3)
- 2. 项目地址：[github](git@github.com:wudyy/springboot-root.git)
+ 2. 项目地址：[github](https://github.com/wudyy/springboot-root.git)
  3. 项目环境：springboot+mybatis+mysql
  4. 配置文件如下
 
@@ -12,6 +12,7 @@ Springboot 的使用已经越来越广泛了，目前使用的主流持久层框
 ###### application.properties：
 
 ```
+
 server.port=8081
 server.servlet.context-path=/mybatis
 spring.main.banner-mode=off
@@ -34,10 +35,12 @@ pagehelper.params=count=countSql
 pagehelper.returnPageInfo=check
 ##redis 地址
 
+
 ```
  1. 实体类一对多关系
  
 ```
+
 	@Data
 	@ToString
 	public class Teacher implements Serializable {
@@ -65,6 +68,7 @@ pagehelper.returnPageInfo=check
 	    private Date createTime;
 	    private Teacher teacher;
 	}
+
 ```
  6. 创建Mapper接口类
 方式一：在Mapper类增加注解 @Mapper 需要每个文件都加
@@ -72,10 +76,12 @@ pagehelper.returnPageInfo=check
 这样spring 就可以扫描Mapper类
  
 ```
+
 @Mapper
 public interface StudentMapper {
 	public static final String TABLE_NAME = "t_student";
 }
+
 ```
 
 ## 2.Mapper下的增删改查
@@ -83,13 +89,17 @@ public interface StudentMapper {
  1. 增加一条数据
 
 ```
+
    @Insert("insert into " + TABLE_NAME + "(name,sex,age,phone_number,teacher_id,create_time) " +
             "values(#{name},#{sex},#{age},#{phoneNumber},#{teacherId},#{createTime})")
     int insertOne(Student student);
+
+
 ```
  2. 批量增加数据
 
 ```
+
     @Insert({"<script> insert into "+TABLE_NAME+"(name,sex,age,phone_number,teacher_id,create_time) " +
             "values " +
             "<foreach collection='list' open='' item='item' separator=','> " +
@@ -97,57 +107,71 @@ public interface StudentMapper {
             "</foreach> </script>"})
         //批量增加数据
     int insertList(List<Student> list);
-```
-### 2.2 删
-	1.删除数据
-	
+
 
 ```
+### 2.2 删
+ 1. 删除数据
+
+```
+
  @Delete("delete from " + TABLE_NAME + " where id = #{id}")
     int delete(Long id);
+
 
 ```
 ### 2.3 改
 
 ```
-   //改
+  
     @Update("update  " + TABLE_NAME + "  set create_time = #{time} where id = #{id}")
     int updateTime(@Param("id") long id, @Param("time") Date time);
+
 ```
 ### 2.4 查
 
  1. 查找一条数据
 
 ```
+
  @Select("select * from " + TABLE_NAME + " where id = #{id} ")
     Student getOneById(Long id);
+
+
 ```
  2. 查找一条数据（一对一）
  
 
 ```
+
 @Select("select * from " + TABLE_NAME + " where id = #{id} ")
     @Results({
             @Result(column = "teacher_id", property = "teacher",
                     one = @One(select = "com.springboot.mybatis.mapper.TeacherMapper.getOneById"))
     })
     Student getOneWithTeacherById(Long id);
+
+
 ```
  3. 查找一条数据（一对多）
  
 
 ```
+
   @Select("select * from " + TABLE_NAME + " where id = #{id} ")
     @Results({
             @Result(column = "id", property = "students",
                     many = @Many(select = "com.springboot.mybatis.mapper.StudentMapper.getListByTeacherId"))
     })
     Teacher getOneWithStudentsById(long id);
+
+
 ```
   4. 查找列表数据
  
 
 ```
+
   @Select("select * from " + TABLE_NAME + " order by create_time desc ")
     List<Teacher> getList();
 
@@ -157,12 +181,16 @@ public interface StudentMapper {
                     many = @Many(select = "com.springboot.mybatis.mapper.StudentMapper.getListByTeacherId"))
     })
     List<Teacher> getTeacherWithStudentsList();
+
+
 ```
   5. 灵活配置返回的参数
   
   
 
 ```
+
+
 @Select("select COUNT(*) AS age_total,SUM(IF(age<14 = 1, 1, 0)) AS age_a,SUM(IF(age>14 and age < 17, 1, 0)) AS age_b,SUM(IF(age >17, 1, 0)) AS age_c from t_student")
     @Results({
             @Result(column = "age_total", property = "ageTotal"),
@@ -171,13 +199,16 @@ public interface StudentMapper {
             @Result(column = "age_c", property = "ageC"),
     })
     StudentAgeInfo getStudentAgeInfo();
+
+
 ```
 
-   6. 动态sql (如果mapper sql 无法满足你的需求动态sql才是考验你技术的时候)
+   6. 动态sql (如果mapper sql 无法满足你的需求，动态sql才是考验你技术的时候)
    创建 StudentMapperProvider 在这里你可以写出你想要的各种sql 
 	
 
 ```
+
 package com.springboot.mybatis.mapper.provider;
 
 import com.springboot.mybatis.entity.Student;
@@ -187,7 +218,7 @@ import org.springframework.util.StringUtils;
 
 
 /**
- * @author hushentao
+ * @author wudyy
  * @date 2019/4/1 16:31
  * @Description: TODO
  */
@@ -245,10 +276,13 @@ public class StudentMapperProvider {
         return sb.toString();
     }
 }
+
+
 ```
 使用：
 
 ```
+
   //动态sql 查询
     @SelectProvider(type = StudentMapperProvider.class, method = "queryAll")
     List<Student> queryAll(Student student);
@@ -256,6 +290,8 @@ public class StudentMapperProvider {
     //动态sql 查询
     @SelectProvider(type = StudentMapperProvider.class, method = "queryAllByNativeSql")
     List<Student> queryAllByNativeSql(Student student);
+
+
 ```
 
-当然增删改也可以使用动态sql，  mybatis就是那么灵活，你想这么玩就可以怎么玩，前提是你能写出一手good sql.
+当然增删改也可以使用动态sql，  mybatis就是那么灵活，你想怎么玩就可以怎么玩，前提是你能写出一手good sql.
