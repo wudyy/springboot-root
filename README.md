@@ -4,7 +4,7 @@ Springboot 的使用已经越来越广泛了，目前使用的主流持久层框
 ## 1.准备
 
  1. 友情链接：[mybatis-3 github](https://github.com/mybatis/mybatis-3)
- 2. 项目地址：[mybatis-3 github](https://github.com/mybatis/mybatis-3)
+ 2. 项目地址：[github](git@github.com:wudyy/springboot-root.git)
  3. 项目环境：springboot+mybatis+mysql
  4. 配置文件如下
 
